@@ -13,6 +13,8 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 
+#include "util.h"
+
 int
 set_blocking(int sd)
 {
