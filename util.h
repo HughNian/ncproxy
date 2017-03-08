@@ -19,10 +19,10 @@ int get_soerror(int sd);
 int get_sndbuf(int sd);
 int get_rcvbuf(int sd);
 
-void *_alloc(size_t size, const char *name, int line);
-void *_zalloc(size_t size, const char *name, int line);
-void *_calloc(size_t nmemb, size_t size, const char *name, int line);
-void *_realloc(void *ptr, size_t size, const char *name, int line);
-void _free(void *ptr, const char *name, int line);
+void *_alloc(size_t size);
+void *_zalloc(size_t size);
+void *_calloc(size_t nmemb, size_t size);
+void *_realloc(void *ptr, size_t size);
+void _free(void *ptr);
 
 #endif
