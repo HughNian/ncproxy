@@ -161,7 +161,7 @@ _alloc(size_t size)
     val = malloc(size);
 
     if(NULL == val)
-    	fprintf(stderr, "malloc failed\n");
+    	fprintf(stderr, "malloc failed\r\n");
 
     return val;
 }
