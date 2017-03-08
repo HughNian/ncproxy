@@ -188,7 +188,7 @@ _realloc(void *ptr, size_t size)
 
     val = realloc(ptr, size);
     if(NULL == val)
-    	fprintf(stderr, "realloc failed\n");
+    	fprintf(stderr, "realloc failed\r\n");
 
     return val;
 }
