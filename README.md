@@ -1,1 +1,1 @@
-# THIS IS ncmq's proxy
+# THIS is ncmq's proxy
