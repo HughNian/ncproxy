@@ -25,4 +25,6 @@ void *_calloc(size_t nmemb, size_t size);
 void *_realloc(void *ptr, size_t size);
 void _free(void *ptr);
 
+static inline unsigned int crc32(char *buf, unsigned int size);
+
 #endif

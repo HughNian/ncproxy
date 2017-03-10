@@ -13,10 +13,13 @@
 
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+#include <event.h>
 
 #include "client.h"
 #include "node.h"
 #include "conn.h"
+#include "buffer.h"
 #include "message.h"
 #include "util.h"
+
 

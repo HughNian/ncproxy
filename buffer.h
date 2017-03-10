@@ -15,4 +15,8 @@ typedef struct list{
 	struct buffer *last;
 } list;
 
+void *buffer_init(size_t size);
+
+list *list_init(size_t size);
+
 #endif
