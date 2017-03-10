@@ -22,4 +22,15 @@
 #include "message.h"
 #include "util.h"
 
+#define VERSION 0.0.1
+#define SERVER_IP "127.0.0.1"
+#define SERVER_PORT 21888
+
+typedef struct proxy{
+    int proxy_fd;
+
+    struct sockaddr_in proxy_addr;
+    char ip[16];
+    int port;
+} proxy;
 

@@ -26,8 +26,8 @@ typedef struct request{
 	size_t size;
 	size_t len;
 
-	char *header;
-	buffer *body;
+	header *header;
+	list *body;
 } request;
 
 typedef struct response{
@@ -36,8 +36,14 @@ typedef struct response{
 	size_t size;
 	size_t len;
 
-	char *header;
-	buffer *body;
+	header *header;
+	list *body;
 } response;
+
+/**request**/
+int parse_command(request *req);
+
+/**response**/
+int send_response(void *resp);
 
 #endif
