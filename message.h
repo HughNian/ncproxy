@@ -14,6 +14,7 @@ typedef enum{
 
 typedef struct header{
 	method type:1;
+	int re_read:1;
 
 	size_t header_size;
 	size_t body_size;

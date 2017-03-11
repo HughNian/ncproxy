@@ -20,9 +20,10 @@
 #include "conn.h"
 #include "buffer.h"
 #include "message.h"
+#include "nmalloc.h"
 #include "util.h"
 
-#define VERSION 0.0.1
+#define VERSION 0.1.1
 #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 21888
 
@@ -32,5 +33,8 @@ typedef struct proxy{
     struct sockaddr_in proxy_addr;
     char ip[16];
     int port;
+
+    client *clientHead;
+    client *clientTail;
 } proxy;
 
