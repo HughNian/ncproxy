@@ -4,6 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <errno.h>
 
 #include <sys/time.h>
 #include <sys/types.h>
@@ -26,9 +27,11 @@
 #define VERSION 0.1.1
 #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 21888
+#define LISTEN_Q 1000
 
 typedef struct proxy{
-    int proxy_fd;
+    int pfd;
+    struct event ev;
 
     struct sockaddr_in proxy_addr;
     char ip[16];
