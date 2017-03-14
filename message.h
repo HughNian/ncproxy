@@ -42,9 +42,11 @@ typedef struct response{
 } response;
 
 /**request**/
+int request_init();
 int parse_command(request *req);
 
 /**response**/
+int response_init();
 int send_response(void *resp);
 
 #endif
