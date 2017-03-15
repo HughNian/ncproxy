@@ -9,13 +9,14 @@
 
 #define CONN_MAX_NUMS 2048
 #define CONN_MAX_TIMES 10
+#define CONN_POOL_STEP 10
 
 typedef struct conn_node{
     client *c;
 
     uint32_t conn_idx;
-    unsigned int status:1;
-    uint32_t times;
+    uint16_t status:1;
+    uint16_t times;
 
     struct list_head list;
 } conn;
@@ -23,10 +24,12 @@ typedef struct conn_node{
 typedef struct conn_pool{
     size_t pool_size;
     size_t pool_len;
+    int used;
 
     conn **conns;
     struct server_pool *servers;
     struct list_head list;
 } conn_pool;
+
 
 #endif

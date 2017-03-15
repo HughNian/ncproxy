@@ -16,8 +16,6 @@ typedef struct client{
     struct sockadd_in client_addr;
     socket_t socket_len;
 
-    size_t len;
-    size_t used;
     time_t cost_time;
 
     request *req;

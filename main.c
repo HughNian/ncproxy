@@ -8,20 +8,12 @@ show_help(void)
 	fprintf(stderr, b, strlen(b));
 }
 
-<<<<<<< HEAD
 static proxy *
-=======
-static void *
->>>>>>> f2b573b864d7de0ec851fc0eaf0ee078be71394e
 proxy_init(void)
 {
     proxy *p;
 
-<<<<<<< HEAD
     p = (proxy *)_zalloc(sizeof(proxy));
-=======
-    p = _zalloc(sizeof(proxy));
->>>>>>> f2b573b864d7de0ec851fc0eaf0ee078be71394e
 
     if(NULL == p){
     	sprintf(stderr, "proxy init failed\n");
@@ -30,11 +22,7 @@ proxy_init(void)
 
     p->ip = SERVER_IP;
     p->port = SERVER_PORT;
-<<<<<<< HEAD
-
     p->client_size = 0;
-=======
->>>>>>> f2b573b864d7de0ec851fc0eaf0ee078be71394e
     p->clientHead = p->clientTail = NULL;
 
     return p;
@@ -44,11 +32,7 @@ int
 proxy_start(void)
 {
     proxy *p;
-<<<<<<< HEAD
     p = proxy_init();
-=======
-    p = (proxy *)proxy_init();
->>>>>>> f2b573b864d7de0ec851fc0eaf0ee078be71394e
 
     if(NULL == p) return -1;
 
@@ -92,11 +76,7 @@ proxy_start(void)
 
     /** event **/
     event_init();
-<<<<<<< HEAD
     event_set(&(p->ev), p->pfd, EV_READ|EV_PERSIST, client_accpet, (void *)p);
-=======
-    event_set(&(p->ev), p->pfd, EV_READ|EV_PERSIST, client_accpet, NULL);
->>>>>>> f2b573b864d7de0ec851fc0eaf0ee078be71394e
     event_add(&(p->ev), 0);
     event_disptch();
 

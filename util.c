@@ -248,7 +248,8 @@ static unsigned int crc32_tab[] = {
 	0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
 };
 
-static inline unsigned int crc32(char *buf, unsigned int size) {
+static inline unsigned int
+crc32(char *buf, unsigned int size) {
 	const char *p;
 	register int crc = 0;
 
@@ -258,4 +259,19 @@ static inline unsigned int crc32(char *buf, unsigned int size) {
 	}
 
 	return crc ^ ~0U;
+}
+
+static inline unsigned int
+hashme(char *str)
+{
+    unsigned int hash = 5381;
+    const char *s;
+
+    if (str == NULL) return 0;
+
+    for (s = str; *s; s++) {
+        hash = ((hash << 5) + hash) + *s;
+    }
+    hash &= 0x7FFFFFFF; /* strip the highest bit */
+    return hash;
 }
