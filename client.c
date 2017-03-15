@@ -1,7 +1,6 @@
 #include "client.h"
 
 int
-<<<<<<< HEAD
 client_init(client **c)
 {
     if(client_free_nums > 0){
@@ -140,24 +139,25 @@ client_accept(const int pfd, const short which, void *arg)
 
     /** event **/
     memset(&(c->ev), 0, sizeof(struct event));
-    event_set(&(c->ev), c->cfd, EV_READ|EV_PERSIST, client_drive, (void *) c);
+    event_set(&(c->ev), c->cfd, EV_READ|EV_PERSIST, client_drive, (void *)c);
     event_add(&(c->ev), 0);
     c->ev_flags = EV_READ;
 
     return;
-=======
-client_init(client *c)
+}
+
+void
+client_drive(const int cfd, const short which, void *arg)
 {
-    c = (client *)_zalloc(sizeof(*c));
+    client *c;
 
-    if(NULL == c){
-        fprintf(stderr, "client init failed, error msg(%s)\n", strerror(errno));
-        return -1;
-    }
+    if(NULL == arg)
+        return;
 
-    c->len = 0;
-    c->size = 0;
-    c->used = 0;
-    c->cost_time = time(NULL);
->>>>>>> f2b573b864d7de0ec851fc0eaf0ee078be71394e
+    c = (client *)arg;
+
+    if(!(which & EV_READ))
+        return;
+
+
 }

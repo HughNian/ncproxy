@@ -16,7 +16,9 @@ typedef struct list{
 } list;
 
 void *buffer_init(size_t size);
-
+void buffer_free(buffer *b);
 list *list_init(size_t size);
+int  list_append(list *l, list *nl);
+void list_free(list *l);
 
 #endif

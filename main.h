@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <stdint.h>
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -27,12 +28,8 @@
 #define VERSION "0.1.1"
 #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 21888
-<<<<<<< HEAD
 #define LISTEN_Q 1024
 #define UNUSED(x) ( (void)(x) )
-=======
-#define LISTEN_Q 1000
->>>>>>> f2b573b864d7de0ec851fc0eaf0ee078be71394e
 
 typedef struct proxy{
     int pfd;

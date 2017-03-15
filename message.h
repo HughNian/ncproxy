@@ -13,8 +13,8 @@ typedef enum{
 } method;
 
 typedef struct header{
-	method type:1;
-	int re_read:1;
+	method type;
+	unsigned int re_read:1;
 
 	size_t header_size;
 	size_t body_size;
@@ -43,10 +43,10 @@ typedef struct response{
 
 /**request**/
 int request_init();
-int parse_command(request *req);
+int parse_request(int cfd, request *req);
 
 /**response**/
 int response_init();
-int send_response(void *resp);
+int send_response(int cfd, void *resp);
 
 #endif
