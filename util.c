@@ -261,7 +261,7 @@ crc32(char *buf, unsigned int size) {
 	return crc ^ ~0U;
 }
 
-static inline unsigned int
+static inline int
 hashme(char *str)
 {
     unsigned int hash = 5381;

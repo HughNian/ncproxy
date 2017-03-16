@@ -16,7 +16,7 @@ typedef enum{
 } server_type;
 
 typedef struct server_node{
-    uint32_t server_idx;
+    int server_idx;
     uint16_t status:1;
     uint16_t weight;
     sever_type type;

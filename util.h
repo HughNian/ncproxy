@@ -26,5 +26,5 @@ void *_realloc(void *ptr, size_t size);
 void _free(void *ptr);
 
 static inline unsigned int crc32(char *buf, unsigned int size);
-static inline unsigned int hashme(char *str);
+static inline int hashme(char *str);
 #endif

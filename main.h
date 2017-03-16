@@ -34,6 +34,10 @@
 #define LISTEN_Q 1024
 #define UNUSED(x) ( (void)(x) )
 
+static int use_ketama = 0;
+static struct ketama *conn_pool_ketama = NULL;
+static struct ketama *server_pool_ketama = NULL;
+
 typedef struct proxy{
     int pfd;
     struct event ev;

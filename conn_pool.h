@@ -15,8 +15,8 @@
 typedef struct conn_node{
     client *c;
 
-    const char *key; //可以是缓存的键值，队列名称，接口服务的名称等。
-    uint32_t conn_idx;
+    const char *key_name; //可以是缓存的键值，队列名称，接口服务的名称等。
+    int conn_idx;
     uint16_t status:1;
     uint16_t times;
 
