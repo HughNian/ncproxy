@@ -18,15 +18,17 @@
 #include <event.h>
 
 #include "client.h"
-#include "node.h"
-#include "conn.h"
 #include "buffer.h"
 #include "message.h"
+#include "conn_pool.h"
+#include "server_pool.h"
+#include "ketama.h"
 #include "nmalloc.h"
 #include "util.h"
 
 #define VERSION "0.1.1"
 #define SERVER_IP "127.0.0.1"
+#define CONF_FILE "conf.ini"
 #define SERVER_PORT 21888
 #define LISTEN_Q 1024
 #define UNUSED(x) ( (void)(x) )
@@ -42,5 +44,8 @@ typedef struct proxy{
     size_t client_size;
     client *clientHead;
     client *clientTail;
+
+    conn_pool *cp;  //连接池
+    server_pool *sp; //服务池
 } proxy;
 

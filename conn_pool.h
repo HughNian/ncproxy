@@ -5,9 +5,10 @@
 #include "client.h"
 #include "message.h"
 #include "server_pool.h"
+#include "ketama.h"
 #include "list.h"
 
-#define CONN_MAX_NUMS 2048
+#define CONN_MAX_SIZE 2048
 #define CONN_MAX_TIMES 10
 #define CONN_POOL_STEP 10
 
@@ -27,9 +28,10 @@ typedef struct conn_pool{
     int used;
 
     conn **conns;
-    struct server_pool *servers;
     struct list_head list;
 } conn_pool;
 
+conn_pool *conn_pool_init(void);
+int put_conn_into_pool(client *c);
 
 #endif

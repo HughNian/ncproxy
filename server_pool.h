@@ -4,8 +4,10 @@
 #include "main.h"
 #include "buffer.h"
 #include "message.h"
+#include "ketama.h"
 #include "list.h"
 
+#define SERVER_MAX_SIZE 2048
 #define SERVER_POOL_STEP 10
 
 typedef enum{
@@ -39,5 +41,8 @@ typedef struct server_pool{
     server **servers;
     struct list_head list;
 } server_pool;
+
+server_pool *server_pool_init(void);
+int put_server_into_pool(server_pool *sp);
 
 #endif

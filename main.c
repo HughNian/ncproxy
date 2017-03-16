@@ -25,6 +25,9 @@ proxy_init(void)
     p->client_size = 0;
     p->clientHead = p->clientTail = NULL;
 
+    p->cp = conn_pool_init();
+    p->sp = server_pool_init();
+
     return p;
 }
 
