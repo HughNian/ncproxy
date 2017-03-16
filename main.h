@@ -29,6 +29,7 @@
 #define VERSION "0.1.1"
 #define SERVER_IP "127.0.0.1"
 #define CONF_FILE "conf.ini"
+#define KETAMA_STEP 500
 #define SERVER_PORT 21888
 #define LISTEN_Q 1024
 #define UNUSED(x) ( (void)(x) )
