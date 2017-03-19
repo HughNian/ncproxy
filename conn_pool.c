@@ -39,13 +39,12 @@ put_conn_into_pool(conn_pool *cp, client *c)
     }
 
     cn->c = c;
-    //todo
-    //cn->key_name
+    cn->key_name = strdup(c->req->header->key);
 
     if(use_ketama){
         cn->conn_idx = get_server(conn_pool_ketama, cn->key_name);
     } else {
-        cn->conn_idx = hashme(cn->key_name);
+        cn->conn_idx = hashme(cn->key_name)%cp->pool_size;
     }
 
 

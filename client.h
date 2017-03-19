@@ -1,6 +1,10 @@
 #ifndef _CLIENT_H_
 #define _CLIENT_H_
 
+#include "main.h"
+#include "buffer.h"
+#include "message.h"
+
 #define CLIENT_MAX_CONN_SIZE 2048
 #define CLIENT_MAX_FREE_SIZE 512
 

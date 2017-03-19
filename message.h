@@ -20,6 +20,8 @@ typedef struct header{
 	uint16_t re_write:1;
 
     const char *key; //可以是缓存的键值，队列名称，接口服务的名称等。
+    size_t key_size;
+    size_t key_len;
     buffer *params; //一些简单的入参
 
 	size_t header_size;

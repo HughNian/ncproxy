@@ -14,6 +14,8 @@ header_init(void)
         _free(h);
         return NULL;
     }
+    h->key_size = 512;
+    h->key_len = 0;
 
     h->params = buffer_init(PARAMS_SIZE);
     if(NULL == h->params){
