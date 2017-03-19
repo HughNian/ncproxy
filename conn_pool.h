@@ -16,9 +16,9 @@ typedef struct conn_node{
     client *c;
 
     const char *key_name; //可以是缓存的键值，队列名称，接口服务的名称等。
-    int conn_idx;
-    uint16_t status:1;
-    uint16_t times;
+    int conn_idx;         //hash主键
+    uint16_t status:1;    //链接状态
+    uint16_t times;       //链接开始时间
 
     struct list_head list;
 } conn;
@@ -33,7 +33,7 @@ typedef struct conn_pool{
 } conn_pool;
 
 conn_pool *conn_pool_init(void);
-int put_conn_into_pool(client *c);
+int put_conn_into_pool(conn_pool *cp, client *c);
 int remove_conn();
 
 #endif

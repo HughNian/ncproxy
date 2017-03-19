@@ -89,5 +89,17 @@ proxy_start(void)
 int
 main(int argc, char **argv)
 {
+    //todo getopt
 
+    if(use_ketama){
+        if(create_ketama(conn_pool_ketama, KETAMA_STEP)){
+            fpritnf(stderr, "conn pool ketama create failed\n");
+            exit(1);
+        }
+
+        if(create_ketama(server_pool_ketama, KETAMA_STEP)){
+            fpritnf(stderr, "server pool ketama create failed\n");
+            exit(1);
+        }
+    }
 }

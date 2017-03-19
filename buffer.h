@@ -1,6 +1,8 @@
 #ifndef _BUFFER_H_
 #define _BUFFER_H_
 
+#define BUFFER_PIECE_SIZE 16
+
 typedef struct buffer{
 	char *data;
 
@@ -15,10 +17,10 @@ typedef struct list{
 	struct buffer *last;
 } list;
 
-void *buffer_init(size_t size);
+buffer *buffer_init(size_t size);
 void buffer_free(buffer *b);
-list *list_init(size_t size);
-int  list_append(list *l, list *nl);
-void list_free(list *l);
+list *list_init(void);
+void  list_append(list *l, buffer *b);
+void list_free(list *l, int keep_list);
 
 #endif

@@ -262,7 +262,7 @@ crc32(char *buf, unsigned int size) {
 }
 
 static inline int
-hashme(char *str)
+hashme(const char *str)
 {
     unsigned int hash = 5381;
     const char *s;

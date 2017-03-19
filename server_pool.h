@@ -43,6 +43,6 @@ typedef struct server_pool{
 } server_pool;
 
 server_pool *server_pool_init(void);
-int put_server_into_pool(server_pool *sp);
+int put_server_into_pool(server_pool *sp, server *s);
 
 #endif

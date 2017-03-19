@@ -22,14 +22,13 @@ conn_pool_init(void)
     cp->pool_len = 0;
     cp->used = 0;
 
-    cp->server_pool = server_pool_init();
     INIT_LIST_HEAD(&cp->list);
 
     return cp;
 }
 
 int
-put_conn_into_pool(client *c)
+put_conn_into_pool(conn_pool *cp, client *c)
 {
     struct conn_node *cn;
 
@@ -39,5 +38,16 @@ put_conn_into_pool(client *c)
         return -1;
     }
 
-    
+    cn->c = c;
+    //todo
+    //cn->key_name
+
+    if(use_ketama){
+        cn->conn_idx = get_server(conn_pool_ketama, cn->key_name);
+    } else {
+        cn->conn_idx = hashme(cn->key_name);
+    }
+
+
+
 }
