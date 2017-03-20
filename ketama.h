@@ -18,5 +18,5 @@ struct ketama {
 
 int create_ketama(struct ketama *, int);
 void free_ketama(struct ketama *);
-int get_server(struct ketama *, const char *);
+int get_pool(struct ketama *, const char *);
 #endif

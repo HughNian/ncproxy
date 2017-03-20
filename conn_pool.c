@@ -18,6 +18,8 @@ conn_pool_init(void)
         _free(cp);
         return NULL;
     }
+    memset(cp->conns, 0, sizeof(conn*) * CONN_POOL_STEP);
+
     cp->pool_size += CONN_POOL_STEP;
     cp->pool_len = 0;
     cp->used = 0;
@@ -42,11 +44,38 @@ put_conn_into_pool(conn_pool *cp, client *c)
     cn->key_name = strdup(c->req->header->key);
 
     if(use_ketama){
-        cn->conn_idx = get_server(conn_pool_ketama, cn->key_name);
+        cn->conn_idx = get_pool(conn_pool_ketama, cn->key_name);
     } else {
         cn->conn_idx = hashme(cn->key_name)%cp->pool_size;
     }
 
+    cn->status = 0;
+    cn->times  = time(NULL);
 
+    list_add_tail(&cn->list, &cp->list);
+    cp->conns[cn->conn_idx] = cn;
+    cp->used++;
 
+    try_conn_pool_resize(cp);
+
+    return 0;
+}
+
+void
+try_conn_pool_resize(conn_pool *cp)
+{
+    conn **new_conns;
+    if(cp->used == cp->pool_size){
+        new_conns = (conn **)_realloc(cp->conns, sizeof(conn*) * (cp->pool_size + CONN_POOL_STEP));
+    }
+
+    if(NULL == new_conns){
+        fprintf(stderr, "conn pool conns realloc failed\n");
+        return;
+    } else {
+        cp->conns = new_conns;
+        cp->pool_size += CONN_POOL_STEP;
+    }
+
+    return;
 }

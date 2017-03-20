@@ -419,7 +419,7 @@ int create_ketama(struct ketama *ring, int step)
 /* return -1 if failed
  * return index + 1 if success
  */
-int get_server(struct ketama *ring, const char *key)
+int get_pool(struct ketama *ring, const char *key)
 {
 	unsigned int highp, maxp, lowp=0, midp, midval, midval1;
 	unsigned int h = ketama_hashi( key );

@@ -33,6 +33,7 @@ typedef struct conn_pool{
 } conn_pool;
 
 conn_pool *conn_pool_init(void);
+void try_conn_pool_resize(conn_pool *cp);
 int put_conn_into_pool(conn_pool *cp, client *c);
 int remove_conn();
 
