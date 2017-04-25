@@ -153,6 +153,114 @@ get_rcvbuf(int sd)
     return size;
 }
 
+//读取单个配置信息
+void
+read_config(char *server_name, char *key, char *val)
+{
+    FILE *fp;
+    char buf_i[100];
+    char *buf,*c = NULL;
+    int found = 0;
+
+    if((fp = read(CONFIG_FILE_PATH, "r")) == NULL){
+    	fprintf(stderr, "read file failed\n");
+    	return;
+    }
+    while(!feof(fp) && fgets(buf_i, 100, fp) != NULL){
+    	buf = NULL;
+    	buf = buf_i;
+    	if(found == 0){
+    		if(buf[0] != '[') continue;
+    		else if(strncmp(buf, server_name, strlen(server_name)) == 0){
+    			found = 1;
+    			continue;
+    		}
+    	} else if(found == 1){
+    		if(buf[0] == ';' || buf[0] == '#') continue;
+    		else if(buf[0] == '[') break;
+    		else if((c = (char *)strchr(buf, key)) != NULL){
+    			if(*(c+strlen(key)) == '='){
+    				val = c+strlen(key)+1;
+    				break;
+    			} else continue;
+    		} else continue;
+    	}
+    }
+
+    return;
+}
+
+//读取多个配置信息
+void
+read_configs(char *server_name, void **val)
+{
+    FILE *fp;
+    char buf_i[100];
+    char *buf,*c = NULL,*address;
+    char **temp;
+    int size = 5, found = 0, i =0, count;
+
+    temp = (char **)malloc(sizeof(char *) * size);
+    if(NULL == temp){
+    	fprintf(stderr, "temp malloc failed\n");
+    	return;
+    }
+
+    if((fp = read(CONFIG_FILE_PATH, "r")) == NULL){
+       	fprintf(stderr, "read file failed\n");
+       	return;
+    }
+
+    while(!feof(fp) && fgets(buf_i, 100, fp) != NULL){
+    	buf = NULL;
+    	buf = buf_i;
+    	if(found == 0){
+    		if(buf[0] != '[') continue;
+    		else if(strncmp(buf, server_name, strlen(buf)) == 0){
+    			found = 1;
+    			continue;
+    		}
+    	} else if(found == 1 && buf[0] != '['){
+    		if(buf[0] == ';' || buf[0] == '#') continue;
+    		else {
+    			count++;
+    			if(count > size){
+    				temp = realloc(temp, size*=2);
+    				if(NULL == temp){
+    					free(temp);
+    					fprintf(stderr, "temp realloc failed\n");
+    					return;
+    				}
+    			}
+
+    			if(c = (char *)strchr(buf, '=')){
+    				address = ++c;
+                    temp[count] = address;
+    			}
+    		}
+    	}
+    }
+
+    val = (void **)temp;
+    return;
+}
+
+void
+get_ip_port(char *address, char *ip, char *port)
+{
+	char *temp;
+
+	if(NULL == address) return;
+
+    if((temp = (char *)strchr(address, ':')) != NULL){
+    	*(temp) = '\0';
+    	ip = address;
+    	port = temp+1;
+    }
+
+    return;
+}
+
 void *
 _alloc(size_t size)
 {

@@ -20,6 +20,9 @@ typedef struct conn_node{
     uint16_t status:1;    //链接状态
     uint16_t times;       //链接开始时间
 
+    request *req;
+    response *resp;
+
     struct list_head list;
 } conn;
 

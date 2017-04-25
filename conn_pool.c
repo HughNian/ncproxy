@@ -51,6 +51,8 @@ put_conn_into_pool(conn_pool *cp, client *c)
 
     cn->status = 0;
     cn->times  = time(NULL);
+    cn->req = request_init();
+    cn->resp = response_init();
 
     list_add_tail(&cn->list, &cp->list);
     cp->conns[cn->conn_idx] = cn;

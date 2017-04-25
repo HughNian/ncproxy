@@ -11,20 +11,18 @@
 #define SERVER_POOL_STEP 10
 
 typedef enum{
-    WORK = 1, //work server
-    BAK = 2   //backup server
+    MASTER = 1, //master server
+    READ = 2   //read server
 } server_type;
 
 typedef struct server_node{
+	int sfd;
     int server_idx;
     uint16_t status:1;
     uint16_t weight;
     sever_type type;
 
     struct event ev;
-
-    request *req;
-    response *resp;
 
     struct list_head list;
 } server;

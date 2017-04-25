@@ -139,7 +139,7 @@ client_accept(const int pfd, const short which, void *arg)
 
     /** event **/
     memset(&(c->ev), 0, sizeof(struct event));
-    event_set(&(c->ev), c->cfd, EV_READ|EV_PERSIST, client_drive, (void *)c);
+    event_set(&(c->ev), p, EV_READ|EV_PERSIST, client_drive, (void *)c);
     event_add(&(c->ev), 0);
     c->ev_flags = EV_READ;
 
@@ -147,17 +147,37 @@ client_accept(const int pfd, const short which, void *arg)
 }
 
 void
-client_drive(const int cfd, const short which, void *arg)
+client_drive(proxy *p, const short which, void *arg)
 {
     client *c;
+    int r,toread;
+    buffer *b;
 
     if(NULL == arg)
         return;
 
     c = (client *)arg;
 
-    if(!(which & EV_READ))
-        return;
+    if(which & EV_READ){
+        b = c->req->header->params;
+        r = PARAMS_SIZE - b->used;
+        if(r > toread) r = toread;
 
+        toread = read(c->cfd, b->data, r);
+        if((toread <= 0) && (errno != EINTR && errno != EAGAIN)){
+            client_close(p, c);
+            return;
+        }
+
+        b->used += toread;
+        b->data[b->used] = '\0';
+
+        if(b->used > PARAMS_SIZE){
+            fprintf(stderr, "params too large\n");
+            return;
+        }
+
+
+    }
 
 }
