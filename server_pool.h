@@ -22,6 +22,13 @@ typedef struct server_node{
     uint16_t weight;
     sever_type type;
 
+    char ip[16];
+    int port;
+    struct sockadd_in server_addr;
+
+    request *req;
+    response *resp;
+
     struct event ev;
 
     struct list_head list;
@@ -31,10 +38,6 @@ typedef struct server_pool{
     size_t pool_size;
     size_t pool_len;
     int used;
-
-    char *ip;
-    int port;
-    struct sockadd_in server_addr;
 
     server **servers;
     struct list_head list;

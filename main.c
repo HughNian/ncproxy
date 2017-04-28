@@ -8,6 +8,8 @@ show_help(void)
 	fprintf(stderr, b, strlen(b));
 }
 
+
+
 static proxy *
 proxy_init(void)
 {
@@ -26,7 +28,15 @@ proxy_init(void)
     p->clientHead = p->clientTail = NULL;
 
     p->cp = conn_pool_init();
+    if(NULL == p->cp){
+    	fprintf(stderr, "conn pool init failed, [%s-%d]\n", __FILE__, __LINE__);
+    	return NULL;
+    }
     p->sp = server_pool_init();
+    if(NULL == p->sp){
+    	fprintf(stderr, "server pool init failed, [%s-%d]\n", __FILE__, __LINE__);
+    	return NULL;
+    }
 
     return p;
 }
@@ -92,47 +102,6 @@ main(int argc, char **argv)
 	int servercount = 0;
 	char temp[65],count[5];
     //todo getopt
-
-    if(use_ketama){
-    	read_config("servercount", count);
-    	servercount = atoi(count);
-
-    	conn_pool_ketama = (struct ketama *)calloc(sizeof(struct ketama), 1);
-    	if(NULL == conn_pool_ketama){
-    		fpritnf(stderr, "conn pool ketama calloc failed\n");
-    		exit(1);
-    	} else {
-    		conn_pool_ketama->count = servercount ? servercount * 2 : CONN_MAX_SIZE;
-    		conn_pool_ketama->weight = (int *)calloc(sizeof(int), conn_pool_ketama->count);
-    		conn_pool_ketama->name = (char **)calloc(sizeof(char *), conn_pool_ketama->count);
-
-    		if(conn_pool_ketama->weight == NULL || conn_pool_ketama->name == NULL) {
-				fprintf(stderr, "conn_pool_ketama weight name calloc failed\n");
-				exit(1);
-			}
-
-    		for(i = 0; i < conn_pool_ketama->count; i++){
-    			conn_pool_ketama->weight[i] = 100;
-    			conn_pool_ketama->totalweight += conn_pool_ketama->weight[i];
-    		    snprintf(temp, 64, "%s-%d", matrixs[i].ip, matrixs[i].port);
-    		    conn_pool_ketama->name[i] = strdup(temp);
-    		    if(conn_pool_ketama->name[i] == NULL){
-    		        fprintf(stderr, "conn_pool_ketama name is NULL\n");
-    		        exit(1);
-    		    }
-    		}
-    	}
-
-        if(create_ketama(conn_pool_ketama, KETAMA_STEP)){
-            fpritnf(stderr, "conn pool ketama create failed\n");
-            exit(1);
-        }
-
-        if(create_ketama(server_pool_ketama, KETAMA_STEP)){
-            fpritnf(stderr, "server pool ketama create failed\n");
-            exit(1);
-        }
-    }
 
     proxy_start();
 }

@@ -8,7 +8,7 @@
 #include "ketama.h"
 #include "list.h"
 
-#define CONN_MAX_SIZE 2048
+#define CONN_MAX_SIZE 1024
 #define CONN_MAX_TIMES 10
 #define CONN_POOL_STEP 10
 
@@ -19,9 +19,6 @@ typedef struct conn_node{
     int conn_idx;         //hash主键
     uint16_t status:1;    //链接状态
     uint16_t times;       //链接开始时间
-
-    request *req;
-    response *resp;
 
     struct list_head list;
 } conn;
@@ -38,6 +35,6 @@ typedef struct conn_pool{
 conn_pool *conn_pool_init(void);
 void try_conn_pool_resize(conn_pool *cp);
 int put_conn_into_pool(conn_pool *cp, client *c);
-int remove_conn();
+int remove_conn(conn_pool *cp, client *c);
 
 #endif

@@ -82,6 +82,7 @@ client_close(proxy *p, client *c)
     }
     else {
         close(c->cfd);
+        remove_conn(p->cp, c);
         _free(c);
     }
 
@@ -163,21 +164,29 @@ client_drive(proxy *p, const short which, void *arg)
         r = PARAMS_SIZE - b->used;
         if(r > toread) r = toread;
 
-        toread = read(c->cfd, b->data, r);
-        if((toread <= 0) && (errno != EINTR && errno != EAGAIN)){
-            client_close(p, c);
-            return;
+        switch(c->req->header->re_status){
+        	case CLIENT_TRANSCATION:
+        		toread = read(c->cfd, b->data, r);
+				if((toread <= 0) && (errno != EINTR && errno != EAGAIN)){
+					client_close(p, c);
+					return;
+				}
+
+				b->used += toread;
+				if(b->used > PARAMS_SIZE){
+					fprintf(stderr, "params too large, [%s-%d]\n", __FILE__, __LINE__);
+					return;
+				}
+				b->data[b->used] = '\0';
+
+				request_parse(c);
+				break;
+        	case CLIENT_REREAD:
+
+        		do_transcation(p, c);
         }
-
-        b->used += toread;
-        b->data[b->used] = '\0';
-
-        if(b->used > PARAMS_SIZE){
-            fprintf(stderr, "params too large\n");
-            return;
-        }
-
+    }
+    else if(which & EV_WRITE){
 
     }
-
 }

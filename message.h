@@ -14,10 +14,15 @@ typedef enum{
 	DELQUEUE
 } method;
 
+typedef enum{
+	CLIENT_TRANSCATION,
+	CLIENT_REREAD,
+	CLIENT_REWRITE
+} header_status;
+
 typedef struct header{
 	method type;
-	uint16_t re_read:1;
-	uint16_t re_write:1;
+	header_status re_status;
 
     const char *key; //可以是缓存的键值，队列名称，接口服务的名称等。
     size_t key_size;
@@ -53,7 +58,7 @@ header *header_init(void);
 void header_free(header *h);
 /**request**/
 request *request_init(void);
-void parse_request(int cfd, request *req);
+void request_parse(client *c);
 void request_free(request *req);
 
 /**response**/

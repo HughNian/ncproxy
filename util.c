@@ -155,14 +155,14 @@ get_rcvbuf(int sd)
 
 //读取单个配置信息
 void
-read_config(char *server_name, char *key, char *val)
+read_config(char *server_name, char *key, char *vals)
 {
     FILE *fp;
     char buf_i[100];
     char *buf,*c = NULL;
     int found = 0;
 
-    if((fp = read(CONFIG_FILE_PATH, "r")) == NULL){
+    if((fp = fopen(CONFIG_FILE_PATH, "r")) == NULL){
     	fprintf(stderr, "read file failed\n");
     	return;
     }
@@ -180,85 +180,118 @@ read_config(char *server_name, char *key, char *val)
     		else if(buf[0] == '[') break;
     		else if((c = (char *)strchr(buf, key)) != NULL){
     			if(*(c+strlen(key)) == '='){
-    				val = c+strlen(key)+1;
+    				memcpy(vals, c+strlen(key)+1, strlen(c+strlen(key)+1));
     				break;
     			} else continue;
     		} else continue;
     	}
     }
+    fclose(fp);
 
     return;
 }
 
 //读取多个配置信息
 void
-read_configs(char *server_name, void **val)
+get_configs(char *server_name, configs *cfs)
 {
-    FILE *fp;
-    char buf_i[100];
-    char *buf,*c = NULL,*address;
-    char **temp;
-    int size = 5, found = 0, i =0, count;
+	FILE *fp;
+	int found = 0,count=0,size = 2;
+    char buf_i[512];
+    char *buf,*c;
 
-    temp = (char **)malloc(sizeof(char *) * size);
-    if(NULL == temp){
-    	fprintf(stderr, "temp malloc failed\n");
+    if(NULL == server_name){
+    	fprintf(stderr, "server_name is NULL\n");
     	return;
     }
 
-    if((fp = read(CONFIG_FILE_PATH, "r")) == NULL){
-       	fprintf(stderr, "read file failed\n");
-       	return;
+    if(NULL == cfs){
+    	fprintf(stderr, "struct configs is NULL\n");
+    	return;
     }
 
-    while(!feof(fp) && fgets(buf_i, 100, fp) != NULL){
-    	buf = NULL;
-    	buf = buf_i;
-    	if(found == 0){
-    		if(buf[0] != '[') continue;
-    		else if(strncmp(buf, server_name, strlen(buf)) == 0){
-    			found = 1;
-    			continue;
-    		}
-    	} else if(found == 1 && buf[0] != '['){
-    		if(buf[0] == ';' || buf[0] == '#') continue;
-    		else {
-    			count++;
-    			if(count > size){
-    				temp = realloc(temp, size*=2);
-    				if(NULL == temp){
-    					free(temp);
-    					fprintf(stderr, "temp realloc failed\n");
-    					return;
-    				}
-    			}
+	if((fp = fopen(CONFIG_FILE_PATH, "r")) == NULL){
+		fprintf(stderr, "open file failed\n");
+		return;
+	}
 
-    			if(c = (char *)strchr(buf, '=')){
-    				address = ++c;
-                    temp[count] = address;
-    			}
-    		}
-    	}
-    }
+	while(!feof(fp) && fgets(buf_i, 512, fp) != NULL){
+		buf = NULL;
+		buf = buf_i;
+		if(found == 0){
+			if(buf[0] != '[') continue;
+			if(strncmp(buf, server_name, strlen(server_name)) == 0){
+				found = 1;
+				continue;
+			}
+		} else {
+			if(buf[0] == '#' || buf[0] == ';') continue;
+			if(buf[0] != '['){
+				++count;
+				if(count > cfs->size){
+					cfs->vals = (char **)realloc(cfs->vals, sizeof(char *)*(cfs->size)*2);
+					if(NULL == cfs->vals){
+						fprintf(stderr, "cfs->vals realloc failed\n");
+						return;
+					}
+					cfs->size = count;
+				}
 
-    val = (void **)temp;
-    return;
+				if(c = (char *)strchr(buf, '=')){
+					cfs->vals[count] = strdup(++c);
+				}
+			} else {
+				break;
+			}
+		}
+	}
+
+	return;
 }
 
 void
 get_ip_port(char *address, char *ip, char *port)
 {
-	char *temp;
+	char *temp,temp2;
 
 	if(NULL == address) return;
 
-    if((temp = (char *)strchr(address, ':')) != NULL){
-    	*(temp) = '\0';
-    	ip = address;
-    	port = temp+1;
-    }
+	if((temp = (char *)strchr(address, ':')) != NULL){
+		*(temp) = '\0';
+		memcpy(ip, address, strlen(address));
 
-    return;
+		temp2 = (char *)strchr(temp+1, '\n');
+		if(temp2 != NULL){
+			*(temp2) = '\0';
+			memcpy(port, temp+1, strlen(temp+1));
+		}
+	}
+
+	return;
+}
+
+//remove \n
+char *
+remove_br(char *str)
+{
+	char *c;
+	if(c = strchr(str, '\n')){
+		*c = '\0';
+	}
+
+	return str;
+}
+
+//remove \r
+char *
+remove_enter(char *str)
+{
+	char *c;
+	if(c = strchr(str, '\r')){
+		*c = '\0';
+	}
+
+	return str;
 }
 
 void *
