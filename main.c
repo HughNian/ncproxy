@@ -8,12 +8,12 @@ show_help(void)
 	fprintf(stderr, b, strlen(b));
 }
 
-static void *
+static proxy *
 proxy_init(void)
 {
     proxy *p;
 
-    p = _zalloc(sizeof(proxy));
+    p = (proxy *)_zalloc(sizeof(proxy));
 
     if(NULL == p){
     	sprintf(stderr, "proxy init failed\n");
@@ -22,7 +22,11 @@ proxy_init(void)
 
     p->ip = SERVER_IP;
     p->port = SERVER_PORT;
+    p->client_size = 0;
     p->clientHead = p->clientTail = NULL;
+
+    p->cp = conn_pool_init();
+    p->sp = server_pool_init();
 
     return p;
 }
@@ -31,7 +35,7 @@ int
 proxy_start(void)
 {
     proxy *p;
-    p = (proxy *)proxy_init();
+    p = proxy_init();
 
     if(NULL == p) return -1;
 
@@ -75,7 +79,7 @@ proxy_start(void)
 
     /** event **/
     event_init();
-    event_set(&(p->ev), p->pfd, EV_READ|EV_PERSIST, client_accpet, NULL);
+    event_set(&(p->ev), p->pfd, EV_READ|EV_PERSIST, client_accpet, (void *)p);
     event_add(&(p->ev), 0);
     event_disptch();
 
@@ -85,5 +89,17 @@ proxy_start(void)
 int
 main(int argc, char **argv)
 {
+    //todo getopt
 
+    if(use_ketama){
+        if(create_ketama(conn_pool_ketama, KETAMA_STEP)){
+            fpritnf(stderr, "conn pool ketama create failed\n");
+            exit(1);
+        }
+
+        if(create_ketama(server_pool_ketama, KETAMA_STEP)){
+            fpritnf(stderr, "server pool ketama create failed\n");
+            exit(1);
+        }
+    }
 }

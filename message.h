@@ -4,6 +4,8 @@
 #include "main.h"
 #include "buffer.h"
 
+#define PARAMS_SIZE 1024
+
 typedef enum{
     SET,
     GET,
@@ -13,8 +15,14 @@ typedef enum{
 } method;
 
 typedef struct header{
-	method type:1;
-	int re_read:1;
+	method type;
+	uint16_t re_read:1;
+	uint16_t re_write:1;
+
+    const char *key; //可以是缓存的键值，队列名称，接口服务的名称等。
+    size_t key_size;
+    size_t key_len;
+    buffer *params; //一些简单的入参
 
 	size_t header_size;
 	size_t body_size;
@@ -22,7 +30,7 @@ typedef struct header{
 } header;
 
 typedef struct request{
-	int type;
+	int status;
 
 	size_t size;
 	size_t len;
@@ -41,10 +49,16 @@ typedef struct response{
 	list *body;
 } response;
 
+header *header_init(void);
+void header_free(header *h);
 /**request**/
-int parse_command(request *req);
+request *request_init(void);
+void parse_request(int cfd, request *req);
+void request_free(request *req);
 
 /**response**/
-int send_response(void *resp);
+response *response_init(void);
+void send_response(int cfd, void *resp);
+void response_free(response *res);
 
 #endif
