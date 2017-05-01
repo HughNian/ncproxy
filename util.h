@@ -3,9 +3,17 @@
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
-#define NC_INET4_ADDRSTRLEN (sizeof("255.255.255.255") - 1)
-#define NC_INET6_ADDRSTRLEN \
+#define INET4_ADDRSTRLEN (sizeof("255.255.255.255") - 1)
+#define INET6_ADDRSTRLEN \
     (sizeof("ffff:ffff:ffff:ffff:ffff:ffff:255.255.255.255") - 1)
+
+#define CONFIG_FILE_PATH "config.ini"
+
+//配置数组
+typedef struct configs{
+	int size;
+	char **vals;
+}configs;
 
 int set_blocking(int sd);
 int set_nonblocking(int sd);
@@ -18,6 +26,11 @@ int set_tcpkeepalive(int sd);
 int get_soerror(int sd);
 int get_sndbuf(int sd);
 int get_rcvbuf(int sd);
+void read_config(char *server_name, char *key, void *val);
+void read_configs(char *server_name, configs *cfs);
+void get_ip_port(char *address, char *ip, char *port);
+char *remove_enter(char *str);
+char *remove_br(char *str);
 
 void *_alloc(size_t size);
 void *_zalloc(size_t size);

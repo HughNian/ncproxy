@@ -16,12 +16,16 @@ typedef enum{
 } server_type;
 
 typedef struct server_node{
+	int sfd;
     int server_idx;
     uint16_t status:1;
     uint16_t weight;
     sever_type type;
 
     struct event ev;
+    char ip[16];
+    int port;
+    struct sockadd_in server_addr;
 
     request *req;
     response *resp;

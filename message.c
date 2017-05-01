@@ -25,6 +25,7 @@ header_init(void)
     }
 
     h->re_read = h->re_write = 0;
+    h->re_status = CLIENT_TRANSCATION;
     h->header_size = h->body_size = 0;
     h->begin_time = time(NULL);
 

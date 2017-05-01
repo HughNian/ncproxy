@@ -26,7 +26,16 @@ proxy_init(void)
     p->clientHead = p->clientTail = NULL;
 
     p->cp = conn_pool_init();
+    if(NULL == p->cp){
+    	fprintf(stderr, "conn pool init failed, [%s-%d]\n", __FILE__, __LINE__);
+    	return NULL;
+    }
+
     p->sp = server_pool_init();
+    if(NULL == p->sp){
+    	fprintf(stderr, "server pool init failed, [%s-%d]\n", __FILE__, __LINE__);
+    	return NULL;
+    }
 
     return p;
 }
@@ -102,4 +111,6 @@ main(int argc, char **argv)
             exit(1);
         }
     }
+
+    proxy_start();
 }

@@ -153,6 +153,147 @@ get_rcvbuf(int sd)
     return size;
 }
 
+//读取单个配置信息
+void
+read_config(char *server_name, char *key, char *vals)
+{
+    FILE *fp;
+    char buf_i[100];
+    char *buf,*c = NULL;
+    int found = 0;
+
+    if((fp = fopen(CONFIG_FILE_PATH, "r")) == NULL){
+    	fprintf(stderr, "read file failed\n");
+    	return;
+    }
+    while(!feof(fp) && fgets(buf_i, 100, fp) != NULL){
+    	buf = NULL;
+    	buf = buf_i;
+    	if(found == 0){
+    		if(buf[0] != '[') continue;
+    		else if(strncmp(buf, server_name, strlen(server_name)) == 0){
+    			found = 1;
+    			continue;
+    		}
+    	} else if(found == 1){
+    		if(buf[0] == ';' || buf[0] == '#') continue;
+    		else if(buf[0] == '[') break;
+    		else if((c = (char *)strchr(buf, key)) != NULL){
+    			if(*(c+strlen(key)) == '='){
+    				memcpy(vals, c+strlen(key)+1, strlen(c+strlen(key)+1));
+    				break;
+    			} else continue;
+    		} else continue;
+    	}
+    }
+    fclose(fp);
+
+    return;
+}
+
+//读取多个配置信息
+void
+get_configs(char *server_name, configs *cfs)
+{
+	FILE *fp;
+	int found = 0,count=0,size = 2;
+    char buf_i[512];
+    char *buf,*c;
+
+    if(NULL == server_name){
+    	fprintf(stderr, "server_name is NULL\n");
+    	return;
+    }
+
+    if(NULL == cfs){
+    	fprintf(stderr, "struct configs is NULL\n");
+    	return;
+    }
+
+	if((fp = fopen(CONFIG_FILE_PATH, "r")) == NULL){
+		fprintf(stderr, "open file failed\n");
+		return;
+	}
+
+	while(!feof(fp) && fgets(buf_i, 512, fp) != NULL){
+		buf = NULL;
+		buf = buf_i;
+		if(found == 0){
+			if(buf[0] != '[') continue;
+			if(strncmp(buf, server_name, strlen(server_name)) == 0){
+				found = 1;
+				continue;
+			}
+		} else {
+			if(buf[0] == '#' || buf[0] == ';') continue;
+			if(buf[0] != '['){
+				++count;
+				if(count > cfs->size){
+					cfs->vals = (char **)realloc(cfs->vals, sizeof(char *)*(cfs->size)*2);
+					if(NULL == cfs->vals){
+						fprintf(stderr, "cfs->vals realloc failed\n");
+						return;
+					}
+					cfs->size = count;
+				}
+
+				if(c = (char *)strchr(buf, '=')){
+					cfs->vals[count] = strdup(++c);
+				}
+			} else {
+				break;
+			}
+		}
+	}
+
+	return;
+}
+
+void
+get_ip_port(char *address, char *ip, char *port)
+{
+	char *temp,temp2;
+
+	if(NULL == address) return;
+
+	if((temp = (char *)strchr(address, ':')) != NULL){
+		*(temp) = '\0';
+		memcpy(ip, address, strlen(address));
+
+		temp2 = (char *)strchr(temp+1, '\n');
+		if(temp2 != NULL){
+			*(temp2) = '\0';
+			memcpy(port, temp+1, strlen(temp+1));
+		}
+	}
+
+	return;
+}
+
+//remove \n
+char *
+remove_br(char *str)
+{
+	char *c;
+	if(c = strchr(str, '\n')){
+		*c = '\0';
+	}
+
+	return str;
+}
+
+//remove \r
+char *
+remove_enter(char *str)
+{
+	char *c;
+	if(c = strchr(str, '\r')){
+		*c = '\0';
+	}
+
+	return str;
+}
+
 void *
 _alloc(size_t size)
 {

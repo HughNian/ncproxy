@@ -32,6 +32,7 @@
 #define KETAMA_STEP 500
 #define SERVER_PORT 21888
 #define LISTEN_Q 1024
+#define BUFFERLEN 1024
 #define UNUSED(x) ( (void)(x) )
 
 static int use_ketama = 0;

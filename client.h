@@ -35,5 +35,6 @@ int  client_unlink(proxy *p, client *c);
 int  client_close(proxy *p, client *c);
 void client_accept(const int pfd, const short which, void *arg);
 void client_drive(const int cfd, const short which, void *arg);
+static void do_transcation(proxy *p, client *c);
 
 #endif

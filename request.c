@@ -38,3 +38,10 @@ request_free(request *req)
 
     _free(req);
 }
+
+//解析请求
+void
+request_parse(client *c)
+{
+
+}
