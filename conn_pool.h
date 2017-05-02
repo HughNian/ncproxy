@@ -10,7 +10,7 @@
 
 #define CONN_MAX_SIZE 1024
 #define CONN_MAX_TIMES 10
-#define CONN_POOL_STEP 10
+#define CONN_POOL_STEP 256
 
 typedef struct conn_node{
     client *c;
@@ -33,8 +33,8 @@ typedef struct conn_pool{
 } conn_pool;
 
 conn_pool *conn_pool_init(void);
-void try_conn_pool_resize(conn_pool *cp);
-int put_conn_into_pool(conn_pool *cp, client *c);
-int remove_conn(conn_pool *cp, client *c);
+void try_conn_pool_resize(conn_pool *);
+int put_conn_into_pool(conn_pool *, client *);
+int remove_conn(conn_pool *, client *);
 
 #endif

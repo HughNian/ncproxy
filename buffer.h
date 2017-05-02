@@ -17,10 +17,10 @@ typedef struct list{
 	struct buffer *last;
 } list;
 
-buffer *buffer_init(size_t size);
-void buffer_free(buffer *b);
+buffer *buffer_init(size_t);
+void buffer_free(buffer *);
 list *list_init(void);
-void  list_append(list *l, buffer *b);
-void list_free(list *l, int keep_list);
+void list_append(list *, buffer *);
+void list_free(list *, int);
 
 #endif

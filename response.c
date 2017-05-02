@@ -5,24 +5,28 @@
 response *
 response_init(void)
 {
+	int blen;
+	buffer *b;
+
     response *res;
     res = _zalloc(sizeof(*res));
     if(NULL == res) return NULL;
 
-    res->header = header_init();
-    if(NULL == res->header){
+    res->header_body = header_body_init();
+    if(NULL == res->header_body){
         _free(res);
         return NULL;
     }
 
-    res->body = list_init();
-    if(NULL == res->body){
-        header_free(res->header);
-        _free(res);
-        return NULL;
+    b = res->header_body->body->first;
+    while(b){
+    	blen += b->len;
+    	b = b->next;
     }
 
-    res->status = res->size = res->len = 0;
+    res->status = 0;
+    res->size = res->header_body->header_size + res->header_body->body_size;
+    res->len = res->header_body->params->len + blen;
 
     return res;
 }
@@ -34,7 +38,7 @@ response_free(response *res)
 
     list_free(res->body, 0);
 
-    header_free(res->header);
+    header_body_free(res->header_body);
 
     _free(res);
 }

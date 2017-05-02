@@ -5,24 +5,28 @@
 request *
 request_init(void)
 {
+	int blen;
+	buffer *b;
+
     reqeuest *req;
     req = (request *)_zalloc(sizeof(*req));
     if(NULL == req) return NULL;
 
-    req->header = header_init();
-    if(NULL == req->header){
+    req->header_body = header_body_init();
+    if(NULL == req->header_body){
         _free(req);
         return NULL;
     }
 
-    req->body = list_init();
-    if(NULL == req->body){
-        header_free(req->header);
-        _free(req);
-        return NULL;
-    }
+    b = req->header_body->body->first;
+	while(b){
+		blen += b->len;
+		b = b->next;
+	}
 
-    req->status = req->size = req->len = 0;
+    req->status = 0;
+    req->size = req->header_body->header_size + req->header_body->body_size;
+    req->len = req->header_body->params->len + blen;
 
     return req;
 }
@@ -34,12 +38,17 @@ request_free(request *req)
 
     list_free(req->body, 0);
 
-    header_free(req->header);
+    header_body_free(req->header_body);
 
     _free(req);
 }
 
-//解析请求
+/**
+ * 解析请求
+ * command: set,get,del,enqueue,dequeue
+ *
+ *
+ */
 void
 request_parse(client *c)
 {

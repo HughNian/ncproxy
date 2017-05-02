@@ -29,12 +29,14 @@ typedef struct client{
     struct client *next;
 } client;
 
-int  client_init(client **c);
-int  client_link(proxy *p, client *c);
-int  client_unlink(proxy *p, client *c);
-int  client_close(proxy *p, client *c);
-void client_accept(const int pfd, const short which, void *arg);
-void client_drive(const int cfd, const short which, void *arg);
-static void do_transcation(proxy *p, client *c);
+int client_init(client **);
+int client_link(proxy *, client *);
+int client_unlink(proxy *, client *);
+int client_close(proxy *, client *);
+static void client_accept(const int, const short, void *);
+static void client_drive(const int, const short, void *);
+void client_return_msg(client *, const char *);
+void do_transcation(proxy *, client *);
+int writev_list(int fd, list *l);
 
 #endif

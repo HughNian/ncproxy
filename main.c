@@ -32,11 +32,14 @@ proxy_init(void)
     	fprintf(stderr, "conn pool init failed, [%s-%d]\n", __FILE__, __LINE__);
     	return NULL;
     }
+    CP = p->cp;
+
     p->sp = server_pool_init();
     if(NULL == p->sp){
     	fprintf(stderr, "server pool init failed, [%s-%d]\n", __FILE__, __LINE__);
     	return NULL;
     }
+    SP = p->sp;
 
     return p;
 }
@@ -48,6 +51,8 @@ proxy_start(void)
     p = proxy_init();
 
     if(NULL == p) return -1;
+
+    PROXY = p;
 
     p->pfd = socket(AF_INET, SOCKET_STREAM, 0);
     if(p->pfd == -1){

@@ -7,11 +7,13 @@
 #define PARAMS_SIZE 1024
 
 typedef enum{
+	INIT,
     SET,
     GET,
     DEL,
 	ENQUEUE,
-	DELQUEUE
+	DELQUEUE,
+	RETURN
 } method;
 
 typedef enum{
@@ -20,19 +22,21 @@ typedef enum{
 	CLIENT_REWRITE
 } header_status;
 
-typedef struct header{
+typedef struct header_body{
 	method type;
 	header_status re_status;
 
     const char *key; //可以是缓存的键值，队列名称，接口服务的名称等。
     size_t key_size;
     size_t key_len;
-    buffer *params; //一些简单的入参
+    buffer *params; //header内容
 
 	size_t header_size;
 	size_t body_size;
 	time_t begin_time;
-} header;
+
+	list *body;
+} header_body;
 
 typedef struct request{
 	int status;
@@ -40,8 +44,7 @@ typedef struct request{
 	size_t size;
 	size_t len;
 
-	header *header;
-	list *body;
+	header_body *header_body;
 } request;
 
 typedef struct response{
@@ -50,20 +53,19 @@ typedef struct response{
 	size_t size;
 	size_t len;
 
-	header *header;
-	list *body;
+	header_body *header_body;
 } response;
 
-header *header_init(void);
-void header_free(header *h);
+header_body *header_body_init(void);
+void header_body_free(header *);
 /**request**/
 request *request_init(void);
-void request_parse(client *c);
-void request_free(request *req);
+void request_parse(client *);
+void request_free(request *);
 
 /**response**/
 response *response_init(void);
-void send_response(int cfd, void *resp);
-void response_free(response *res);
+void send_response(int, void *);
+void response_free(response *);
 
 #endif

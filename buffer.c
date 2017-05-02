@@ -7,11 +7,11 @@ buffer_init(size_t size)
     buffer *b;
 
     if(size <= 0) return NULL;
-    b = (buffer *)_zalloc(size);
+    b = (buffer *)_zalloc(sizeof(*b));
     if(NULL == b) return NULL;
 
-    b->size = size;
     size += BUFFER_PIECE_SIZE - (size % BUFFER_PIECE_SIZE);
+    b->size = size;
 
     b->data = (char *)_zalloc(size);
     if(NULL == b->data){
@@ -19,7 +19,7 @@ buffer_init(size_t size)
         return NULL;
     }
 
-    b->len = size;
+    b->len = 0;
 
     b->next = NULL;
 

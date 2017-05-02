@@ -89,7 +89,7 @@ client_close(proxy *p, client *c)
     return 1;
 }
 
-void
+static void
 client_accept(const int pfd, const short which, void *arg)
 {
     proxy *p;
@@ -147,7 +147,7 @@ client_accept(const int pfd, const short which, void *arg)
     return;
 }
 
-void
+static void
 client_drive(proxy *p, const short which, void *arg)
 {
     client *c;
@@ -159,34 +159,63 @@ client_drive(proxy *p, const short which, void *arg)
 
     c = (client *)arg;
 
-    if(which & EV_READ){
-        b = c->req->header->params;
-        r = PARAMS_SIZE - b->used;
-        if(r > toread) r = toread;
-
-        switch(c->req->header->re_status){
-        	case CLIENT_TRANSCATION:
-        		toread = read(c->cfd, b->data, r);
-				if((toread <= 0) && (errno != EINTR && errno != EAGAIN)){
-					client_close(p, c);
-					return;
-				}
-
-				b->used += toread;
-				if(b->used > PARAMS_SIZE){
-					fprintf(stderr, "params too large, [%s-%d]\n", __FILE__, __LINE__);
-					return;
-				}
-				b->data[b->used] = '\0';
-
-				request_parse(c);
-				break;
-        	case CLIENT_REREAD:
-
-        		do_transcation(p, c);
-        }
+    if(put_conn_into_pool(p->cp, c) == -1){
+    	client_return_msg(c, "conn pool is full\n");
+    	fprintf(stderr, "put conn into pool failed, [%s-%d]\n", __FILE__, __LINE__);
+    	return;
     }
-    else if(which & EV_WRITE){
 
-    }
+    conn_pool_drive();
+}
+
+void
+client_return_msg(client *c, const char *msg)
+{
+    buffer *rmsg;
+    int len;
+
+    len = strlen(msg);
+    rmsg = buffer_init(len+3);
+    if(NULL == rmsg) return;
+
+    memcpy(rmsg->data, msg, len);
+    memcpy(rmsg->data+len, "\r\n", 2);
+    rmsg->size = len+2;
+    rmsg->len  = len+2;
+    rmsg->data[rmsg->len] = '\0';
+
+    c->resp->header_body->type = RETURN;
+    list_append(c->resp->header_body->body, rmsg);
+
+    if (writev_list(c->cfd, c->resp->header_body) >= 0) {
+		if (c->resp->header_body->body->first && (c->ev_flags != EV_WRITE)) {
+			//todo modify it
+			event_del(&(c->ev));
+			event_set(&(c->ev), PROXY, EV_WRITE|EV_PERSIST, client_drive, (void *)c);
+			event_add(&(c->ev), 0);
+			c->ev_flags = EV_WRITE;
+		}
+	} else {
+		client_close(PROXY, c);
+	}
+}
+
+void
+do_transcation(proxy *p, client *c)
+{
+
+}
+
+int
+writev_list(int fd, header_body *hb)
+{
+	size_t num_chunks, i, num_bytes = 0, toSend, r, r2;
+	struct iovec chunks[UIO_MAXIOV];
+	buffer *b;
+
+	if(fd < 0 || hb == NULL || hb->type != RETURN || hb->body->first == NULL) return 0;
+
+	for(num_chunks = 0, b = hb->body->first; b && num_chunks < UIO_MAXIOV; num_chunks++, b = b->next);
+
+
 }

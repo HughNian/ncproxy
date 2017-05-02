@@ -2,43 +2,50 @@
 #include "buffer.h"
 #include "message.h"
 
-header *
-header_init(void)
+header_body *
+header_body_init(void)
 {
-    header *h;
-    h = (header *)_zalloc(sizeof(*h));
+    header_body *hb;
+    hb = (header *)_zalloc(sizeof(*h));
     if(NULL == H) return NULL;
 
-    h->key = (char *)_zalloc(sizeof(char *)*512);
-    if(NULL == h->key){
-        _free(h);
+    hb->type = INIT;
+
+    hb->key = (char *)_zalloc(sizeof(char *)*512);
+    if(NULL == hb->key){
+        _free(hb);
         return NULL;
     }
-    h->key_size = 512;
-    h->key_len = 0;
+    hb->key_size = 512;
+    hb->key_len = 0;
 
-    h->params = buffer_init(PARAMS_SIZE);
-    if(NULL == h->params){
-        _free(h->key);
-        _free(h);
+    hb->params = buffer_init(PARAMS_SIZE);
+    if(NULL == hb->params){
+    	header_body_free(hb);
         return NULL;
     }
 
-    h->re_status = CLIENT_TRANSCATION;
-    h->header_size = h->body_size = 0;
-    h->begin_time = time(NULL);
+    hb->re_status = CLIENT_TRANSCATION;
+    hb->header_size = hb->body_size = 0;
+    hb->begin_time = time(NULL);
+
+    hb->body = list_init();
+	if(NULL == hb->body){
+		header_body_free(hb);
+		return NULL;
+	}
 
     return h;
 }
 
 void
-header_free(header *h)
+header_body_free(header_body *hb)
 {
-    if(NULL == h) return;
+    if(NULL == hb) return;
 
-    buffer_free(h->params);
+    buffer_free(hb->params);
 
-    _free(h->key);
+    _free(hb->key);
 
-    _free(h);
+    _free(hb);
 }

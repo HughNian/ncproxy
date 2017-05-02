@@ -15,11 +15,11 @@ typedef struct nmHead {
 	unsigned int  size;
 } nmHead;
 
-void nminit(int mb);
-void *nmalloc(unsigned int size);
-void *nrealloc(void *point, unsigned int nsize);
-void nfree(void *point);
-char *ntype(void *point);
-unsigned int nsize(void *point);
+void nminit(int);
+void *nmalloc(unsigned int);
+void *nrealloc(void *, unsigned int);
+void nfree(void *);
+char *ntype(void *);
+unsigned int nsize(void *);
 
 #endif

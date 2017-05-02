@@ -12,6 +12,7 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <sys/queue.h>
+#include <sys/uio.h>
 
 #include <netinet/in.h>
 #include <netinet/tcp.h>
@@ -35,9 +36,12 @@
 #define BUFFERLEN 1024
 #define UNUSED(x) ( (void)(x) )
 
-static int use_ketama = 0;
-static struct ketama *conn_pool_ketama = NULL;
-static struct ketama *server_pool_ketama = NULL;
+int use_ketama = 0;
+struct ketama *conn_pool_ketama = NULL;
+struct ketama *server_pool_ketama = NULL;
+struct conn_pool *CP = NULL;
+struct server_pool *SP = NULL;
+struct proxy *PROXY = NULL;
 
 typedef struct proxy{
     int pfd;

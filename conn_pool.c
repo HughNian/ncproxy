@@ -9,7 +9,7 @@ conn_pool_init(void)
 
     read_config("[servercount]", "count", count);
     scount = atoi(count);
-    cp_size = scount ? scount * 2 : CONN_POOL_STEP;
+    cp_size = scount ? scount * 20 : CONN_POOL_STEP; //是服务数量的20倍，默认为256
 
     cp = (conn_pool *)_zalloc(sizeof(*cp));
 
@@ -69,6 +69,11 @@ put_conn_into_pool(conn_pool *cp, client *c)
 {
     struct conn_node *cn;
 
+    if(cp->used >= CONN_MAX_SIZE){
+       	fprintf(stderr, "conn pool has reached the upper limit");
+       	return -1;
+    }
+
     cn = (conn *)_zalloc(sizeof(*cn));
     if(NULL == cn){
         fprintf(stderr, "put conn into pool failed\n");
@@ -119,25 +124,29 @@ int
 remove_conn(conn_pool *cp, client *c)
 {
 	struct list_head *pos;
-	conn *cn;
+	conn *cn,*_cn;
 	int conn_idx;
     const char *key_name;
     key_name = c->req->header->key;
 
+    if(use_ketama){
+		conn_idx = get_pool(conn_pool_ketama, key_name);
+	} else {
+		conn_idx = hashme(key_name)%cp->pool_size;
+	}
+
+    cn = cp->conns[conn_idx];
+
+    if(NULL == cn) return 0;
+
     list_for_each(pos, &(cp->list)){
-    	cn = list_entry(pos, conn, list);
-
-    	if(strncmp(key_name, cn->key_name, strlen(key_name)) == 0){
-    		if(use_ketama){
-				conn_idx = get_pool(conn_pool_ketama, cn->key_name);
-			} else {
-				conn_idx = hashme(cn->key_name)%cp->pool_size;
-			}
-
-    		if(conn_idx == cn->conn_idx){
+    	_cn = list_entry(pos, conn, list);
+    	if((memcmp(cn, _cn, sizeof(cn)) == 0)
+    		&& (strncmp(key_name, _cn->key_name, strlen(key_name)) == 0)){
+    		if(conn_idx == _cn->conn_idx){
     			list_free(pos);
-    			free(cn->key_name);
-    			free(cn);
+    			free(_cn->key_name);
+    			free(_cn);
     		}
     	}
     }

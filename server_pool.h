@@ -44,7 +44,7 @@ typedef struct server_pool{
 } server_pool;
 
 server_pool *server_pool_init(void);
-void try_server_pool_resize(server_pool *sp);
-int put_server_into_pool(server_pool *sp, server *s);
+void try_server_pool_resize(server_pool *);
+int put_server_into_pool(server_pool *, server *);
 
 #endif
