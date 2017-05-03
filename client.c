@@ -159,13 +159,12 @@ client_drive(proxy *p, const short which, void *arg)
 
     c = (client *)arg;
 
-    if(put_conn_into_pool(p->cp, c) == -1){
-    	client_return_msg(c, "conn pool is full\n");
-    	fprintf(stderr, "put conn into pool failed, [%s-%d]\n", __FILE__, __LINE__);
-    	return;
-    }
+    if(which & EV_READ){
 
-    conn_pool_drive();
+    }
+    else if(which & EV_WRITE){
+
+    }
 }
 
 void

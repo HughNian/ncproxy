@@ -27,13 +27,6 @@ proxy_init(void)
     p->client_size = 0;
     p->clientHead = p->clientTail = NULL;
 
-    p->cp = conn_pool_init();
-    if(NULL == p->cp){
-    	fprintf(stderr, "conn pool init failed, [%s-%d]\n", __FILE__, __LINE__);
-    	return NULL;
-    }
-    CP = p->cp;
-
     p->sp = server_pool_init();
     if(NULL == p->sp){
     	fprintf(stderr, "server pool init failed, [%s-%d]\n", __FILE__, __LINE__);
@@ -94,7 +87,7 @@ proxy_start(void)
 
     /** event **/
     event_init();
-    event_set(&(p->ev), p->pfd, EV_READ|EV_PERSIST, client_accpet, (void *)p);
+    event_set(&(p->ev), p->pfd, EV_READ|EV_PERSIST, client_accept, (void *)p);
     event_add(&(p->ev), 0);
     event_disptch();
 
@@ -108,5 +101,6 @@ main(int argc, char **argv)
 	char temp[65],count[5];
     //todo getopt
 
+	conn_init();
     proxy_start();
 }

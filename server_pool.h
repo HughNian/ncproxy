@@ -18,12 +18,14 @@ typedef enum{
 typedef struct server_node{
 	int sfd;
     int server_idx;
+
     uint16_t status:1;
     uint16_t weight;
     sever_type type;
 
     char ip[16];
     int port;
+    socket_t socket_len;
     struct sockadd_in server_addr;
 
     request *req;
@@ -44,7 +46,7 @@ typedef struct server_pool{
 } server_pool;
 
 server_pool *server_pool_init(void);
-void try_server_pool_resize(server_pool *);
-int put_server_into_pool(server_pool *, server *);
+void try_server_pool_resize(server_pool *sp);
+int put_server_into_pool(server_pool *sp, server *s);
 
 #endif

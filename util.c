@@ -155,7 +155,7 @@ get_rcvbuf(int sd)
 
 //读取单个配置信息
 void
-read_config(char *server_name, char *key, char *vals)
+get_config(char *server_name, char *key, char *vals)
 {
     FILE *fp;
     char buf_i[100];

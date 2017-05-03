@@ -21,7 +21,7 @@
 #include "client.h"
 #include "buffer.h"
 #include "message.h"
-#include "conn_pool.h"
+#include "connection.h"
 #include "server_pool.h"
 #include "ketama.h"
 #include "nmalloc.h"
@@ -37,9 +37,7 @@
 #define UNUSED(x) ( (void)(x) )
 
 int use_ketama = 0;
-struct ketama *conn_pool_ketama = NULL;
 struct ketama *server_pool_ketama = NULL;
-struct conn_pool *CP = NULL;
 struct server_pool *SP = NULL;
 struct proxy *PROXY = NULL;
 
@@ -55,7 +53,6 @@ typedef struct proxy{
     client *clientHead;
     client *clientTail;
 
-    conn_pool *cp;  //连接池
     server_pool *sp; //服务池
 } proxy;
 
